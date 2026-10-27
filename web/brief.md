@@ -40,3 +40,16 @@ Use a task such as “find my invoice” with a visible route to a person. Judge
 - The narrowband option downsamples to 8 kHz and returns to 16 kHz. It does not emulate a full telephone codec, packet loss or a telephone network.
 - Initial public samples are from the FLEURS `nb_no` test split, with SHA-256 hashes and references retained on Hugin. FLEURS is CC-BY-4.0. They are not a held-out dialect/customer-service corpus and possible training overlap is not ruled out. [FLEURS dataset](https://huggingface.co/datasets/google/fleurs).
 - Human handoff is simulated; the fictional agent has no access to accounts or customer systems. No hosted speech provider receives audio in this deployment.
+
+## First measured pilot on Hugin
+
+20 FLEURS Bokmål read-speech clips, 231.48 seconds, 389 reference words. Same recordings and normalization for every model; no vocabulary hints or bandwidth simulation.
+
+| Model | Word errors | Corpus WER | Median warm inference |
+|---|---:|---:|---:|
+| NB-Whisper Large | 20 | 5.14% | 0.787 s |
+| Bokfink 0.2, 0.6B | 22 | 5.66% | 0.552 s |
+| NB-Whisper Distil Turbo | 34 | 8.74% | 0.208 s |
+| Whisper Large v3 Turbo | 35 | 9.00% | 0.266 s |
+
+Large gives the lowest word-error count in this small sample; Bokfink is only two errors behind. The distilled model is a useful responsiveness candidate, with a visible accuracy tradeoff here. These observations do not establish a dialect winner. Timings exclude load, queue, network and playback and compare the actual FP16/BF16 deployments. No failures occurred in these 80 model/clip calls. [Aggregate measurements and pinned revisions](pilot.json).

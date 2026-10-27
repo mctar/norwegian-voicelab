@@ -1,0 +1,55 @@
+{
+  "date": "2026-10-27",
+  "corpus": "google/fleurs nb_no test, existing deterministic hash-ordered pilot subset",
+  "license": "CC-BY-4.0",
+  "manifest_sha256": "4aecb9626f65f1dc8924ecdb7fb3b22cec3a73d5e4b0067f0eb12e6f23a9f0b8",
+  "conditions": "Bokm\u00e5l readable text, no vocabulary hints, no simulated telephone bandwidth; same audio for each model",
+  "aggregates": [
+    {
+      "model": "bokfink02",
+      "clips": 20,
+      "words": 389,
+      "word_errors": 22,
+      "wer": 0.056555269922879174,
+      "inference_s": 12.746,
+      "audio_s": 231.48,
+      "warm_median_request_s": 0.552,
+      "revision": "71292119b4505ab54c8a48a0ffcd2784b25f1c71"
+    },
+    {
+      "model": "nb-whisper-large",
+      "clips": 20,
+      "words": 389,
+      "word_errors": 20,
+      "wer": 0.05141388174807198,
+      "inference_s": 16.858999999999998,
+      "audio_s": 231.48,
+      "warm_median_request_s": 0.787,
+      "revision": "8c6249fdeeb4dcd05e5735a4c39640607eb6e4ac"
+    },
+    {
+      "model": "nb-whisper-distil",
+      "clips": 20,
+      "words": 389,
+      "word_errors": 34,
+      "wer": 0.08740359897172237,
+      "inference_s": 4.557,
+      "audio_s": 231.48,
+      "warm_median_request_s": 0.208,
+      "revision": "5f3a904a7ff82fbf3de5c48d59edf9c59b820773"
+    },
+    {
+      "model": "whisper-turbo",
+      "clips": 20,
+      "words": 389,
+      "word_errors": 35,
+      "wer": 0.08997429305912596,
+      "inference_s": 5.444,
+      "audio_s": 231.48,
+      "warm_median_request_s": 0.266,
+      "revision": "41f01f3fe87f28c78e2fbf8b568835947dd65ed9"
+    }
+  ],
+  "source_url": "https://huggingface.co/datasets/google/fleurs",
+  "limitation": "20 read Bokm\u00e5l clips; 389 reference words. Not a dialect, phone-call or task-completion benchmark. Training overlap is not ruled out."
+}
