@@ -109,6 +109,7 @@ document.querySelectorAll('[data-tab]').forEach(button => button.addEventListene
   if (recordingMode) { status(recordingMode === 'talk' ? 'talk-status' : 'compare-status', 'Stop the recording before changing workspaces.'); return; }
   document.querySelectorAll('[data-tab]').forEach(b => {const active = b === button; b.classList.toggle('active', active); b.setAttribute('aria-selected', active);});
   document.querySelectorAll('.workspace').forEach(s => {s.hidden = s.id !== button.dataset.tab;});
+  document.body.classList.toggle('admin-open', button.dataset.tab === 'admin');
   if (button.dataset.tab === 'compare') drawIdle();
 }));
 
