@@ -2,10 +2,18 @@
 const API = 'https://voicelab-api.btrbot.com';
 const $ = id => document.getElementById(id);
 let key = sessionStorage.getItem('norsk-key') || '';
+let labSession = sessionStorage.getItem('norsk-session') || '';
 const fragment = new URLSearchParams(location.hash.slice(1));
 if (fragment.has('key')) {
   key = fragment.get('key');
   sessionStorage.setItem('norsk-key', key);
+  labSession = ''; sessionStorage.removeItem('norsk-session');
+}
+if (fragment.has('admin')) {
+  sessionStorage.setItem('norsk-admin', fragment.get('admin'));
+  sessionStorage.removeItem('norsk-admin-session');
+}
+if (fragment.has('key') || fragment.has('admin')) {
   history.replaceState(null, '', location.pathname + location.search);
 }
 let catalogue, sample, sampleURL, recorder, stream, recordingMode, recordStart, timer, animation;
@@ -17,10 +25,13 @@ const seconds = value => `${Number(value).toFixed(2)}s`;
 function status(id, message, state = '') { $(id).textContent = message; $(id).className = `status ${state}`; }
 
 async function request(path, options = {}) {
-  const response = await fetch(API + path, {...options, headers: {Authorization: `Bearer ${key}`, ...options.headers}});
+  const {noSession = false, ...settings} = options;
+  const response = await fetch(API + path, {...settings, headers: {Authorization: `Bearer ${key}`,
+    ...(!noSession && labSession ? {'X-Lab-Session':labSession} : {}), ...settings.headers}});
   if (!response.ok) {
     let body; try { body = await response.json(); } catch { body = {}; }
     if (response.status === 401) { connected = false; updateControls(); throw new Error('The access key was rejected. Reconnect to Hugin.'); }
+    if (response.status === 403) { connected = false; updateControls(); throw new Error(body.detail || 'This session has ended. Reconnect to continue.'); }
     throw new Error(typeof body.detail === 'string' ? body.detail : `Hugin returned HTTP ${response.status}.`);
   }
   return response;
@@ -49,6 +60,7 @@ function updateControls() {
   $('reset-chat').disabled = speaking || Boolean(recordingMode);
   $('audio-file').disabled = comparing || Boolean(recordingMode);
   $('public-sample').disabled = !connected || comparing || Boolean(recordingMode);
+  $('disconnect').disabled = !connected;
 }
 function models() {
   if (!catalogue) return;
@@ -62,9 +74,15 @@ function models() {
   document.querySelectorAll('#models input').forEach(e => e.addEventListener('change', updateControls));
   updateControls();
 }
-async function connect() {
+async function connect(newSession = false) {
   status('connect-status', 'Checking the connection…', 'busy');
   try {
+    if (newSession) {labSession = ''; sessionStorage.removeItem('norsk-session');}
+    if (!labSession) {
+      const session = await (await request('/api/sessions', {method:'POST', noSession:true,
+        headers:{'Content-Type':'application/json'}, body:JSON.stringify({label:`Browser · ${navigator.platform || 'web'}`.slice(0,80)})})).json();
+      labSession = session.id; sessionStorage.setItem('norsk-session', labSession);
+    }
     catalogue = await (await request('/api/catalogue')).json();
     connected = true;
     sessionStorage.setItem('norsk-key', key);
@@ -74,7 +92,18 @@ async function connect() {
   } catch (error) { status('connect-status', error.message || 'Could not reach Hugin.', 'error'); }
 }
 $('connect').addEventListener('click', () => {$('access-key').value = key; $('connect-dialog').showModal();});
-$('connect-form').addEventListener('submit', event => {event.preventDefault(); key = $('access-key').value.trim(); connect();});
+$('connect-form').addEventListener('submit', event => {event.preventDefault(); key = $('access-key').value.trim(); connect(true);});
+$('disconnect').addEventListener('click', async () => {
+  try {if (labSession) await request('/api/sessions/end',{method:'POST',headers:{'Content-Type':'application/json'},body:'{}'});} catch {}
+  connected = false; key = ''; labSession = '';
+  sessionStorage.removeItem('norsk-key'); sessionStorage.removeItem('norsk-session');
+  $('access-key').value = ''; $('connect-dialog').close(); updateControls();
+});
+setInterval(async () => {
+  if (!connected || !labSession) return;
+  try {await request('/api/sessions/heartbeat',{method:'POST',headers:{'Content-Type':'application/json'},body:'{}'});}
+  catch (error) {status('compare-status',error.message,'error');status('talk-status',error.message,'error');}
+},30000);
 $('target').addEventListener('change', models); $('style').addEventListener('change', models);
 document.querySelectorAll('[data-tab]').forEach(button => button.addEventListener('click', () => {
   if (recordingMode) { status(recordingMode === 'talk' ? 'talk-status' : 'compare-status', 'Stop the recording before changing workspaces.'); return; }

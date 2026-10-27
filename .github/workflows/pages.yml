@@ -19,7 +19,9 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - name: Check browser code
-        run: node --check web/app.js
+        run: |
+          node --check web/app.js
+          node --check web/admin.js
       - uses: actions/configure-pages@v5
       - uses: actions/upload-pages-artifact@v3
         with:
