@@ -51,5 +51,43 @@
     }
   ],
   "source_url": "https://huggingface.co/datasets/google/fleurs",
-  "limitation": "20 read Bokm\u00e5l clips; 389 reference words. Not a dialect, phone-call or task-completion benchmark. Training overlap is not ruled out."
+  "limitation": "20 read Bokm\u00e5l clips; 389 reference words. Not a dialect, phone-call or task-completion benchmark. Training overlap is not ruled out.",
+  "integration_probes": {
+    "synthetic_agent": {
+      "first_server_turn_s": 9.906,
+      "repeat_server_turn_s": 1.427,
+      "handoff_simulated": true,
+      "limitation": "One synthetic invoice prompt; server time excludes capture, network, polling and playback."
+    },
+    "three_second_digital_silence": [
+      {
+        "model": "bokfink02",
+        "emitted_text": false,
+        "error": null
+      },
+      {
+        "model": "nb-whisper-large",
+        "emitted_text": false,
+        "error": null
+      },
+      {
+        "model": "nb-whisper-distil",
+        "emitted_text": false,
+        "error": null
+      },
+      {
+        "model": "whisper-turbo",
+        "emitted_text": true,
+        "error": null
+      }
+    ],
+    "nynorsk_controls_verified": [
+      "nb-whisper-large",
+      "bokfink02"
+    ],
+    "vocabulary_controls_verified": [
+      "nb-whisper-distil",
+      "bokfink02"
+    ]
+  }
 }
