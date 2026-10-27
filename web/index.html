@@ -5,7 +5,7 @@
   <meta name="referrer" content="no-referrer">
   <meta name="description" content="A Norwegian voice workbench: compare recognition, listen to synthesis and try a local customer-service agent on Hugin.">
   <title>Norsk · Voice Lab</title>
-  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="style.css?v=0.2.0">
 </head>
 <body>
 <header class="topbar"><a class="brand" href="./"><span class="brand-icon" aria-hidden="true">n.</span><span>NORSK <b>VOICE LAB</b></span></a><button id="connect" class="connection"><span class="dot"></span><span id="connection-label">Connect to Hugin</span><span aria-hidden="true">↗</span></button></header>
@@ -62,6 +62,6 @@
   <footer><p><b>n.</b> A workbench, not a verdict.</p><p>Audio is processed on Hugin. Uploads are discarded after processing; results expire from server memory after 10 minutes. Usage metadata is kept for 30 days. Exports stay with you.</p><a href="https://github.com/mctar/norwegian-voicelab" target="_blank" rel="noopener noreferrer">Source ↗</a></footer>
 </main>
 <dialog id="connect-dialog"><form method="dialog"><button class="dialog-close" aria-label="Close">×</button></form><p class="eyebrow">PRIVATE COMPUTE · PUBLIC WORKBENCH</p><h2>Connect to Hugin.</h2><p>The interface lives on GitHub Pages. Your lab access key authorises inference on Hugin and is kept only for this browser tab.</p><form id="connect-form"><label>Lab access key<input id="access-key" type="password" autocomplete="off" spellcheck="false" required></label><button class="button primary wide" type="submit">Connect <span>↗</span></button><p id="connect-status" class="status" role="status"></p><button id="disconnect" type="button" class="text-button" disabled>Disconnect this session</button></form></dialog>
-<script src="app.js" defer></script>
-<script src="admin.js" defer></script>
+<script src="app.js?v=0.2.0" defer></script>
+<script src="admin.js?v=0.2.0" defer></script>
 </body></html>
